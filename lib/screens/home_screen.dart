@@ -99,7 +99,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         SizedBox(
-                          width: index < 9 ? 30 : 15,
+                          width: index < 9
+                              ? 30
+                              : index == 99
+                                  ? 10
+                                  : 20,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,15 +119,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(
                               height: 10,
                             ),
-                            Text("BTC"),
+                            Text(
+                              cryptoList[index].symbol,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
                           ],
                         ),
                         const Spacer(),
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              "bitcoin",
-                              style: TextStyle(
+                              cryptoList[index].priceUsd.toStringAsFixed(2),
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -132,10 +143,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 10,
                             ),
                             Text(
-                              "BTC",
+                              cryptoList[index]
+                                  .changePercent24Hr
+                                  .toStringAsFixed(2),
                               style: TextStyle(
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.greenAccent.withOpacity(0.7),
+                                color: cryptoList[index].changePercent24Hr < 0.0
+                                    ? Colors.redAccent.withOpacity(0.7)
+                                    : Colors.greenAccent.withOpacity(0.7),
                               ),
                             ),
                           ],
@@ -143,7 +159,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(
                           width: 15,
                         ),
-                        Icon(Icons.trending_up)
+                        Icon(
+                          cryptoList[index].changePercent24Hr < 0.0
+                              ? Icons.trending_down
+                              : Icons.trending_up,
+                          color: cryptoList[index].changePercent24Hr < 0.0
+                              ? Colors.redAccent.withOpacity(0.7)
+                              : Colors.greenAccent.withOpacity(0.7),
+                        )
                       ],
                     ),
                   );
