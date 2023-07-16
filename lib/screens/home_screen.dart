@@ -25,10 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-              getData();
-            }),
+          icon: const Icon(Icons.refresh),
+          onPressed: () {
+            cryptoList.clear();
+            getData();
+          },
+        ),
         elevation: 0,
         title: const Text("CryptoMarket"),
         centerTitle: true,
@@ -42,11 +44,13 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: searchController,
               cursorColor: Colors.white,
               style: TextStyle(
+                fontWeight: FontWeight.bold,
                 color: Colors.black.withOpacity(0.7),
               ),
               decoration: InputDecoration(
                 filled: true,
                 hintStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
                   color: Colors.black.withOpacity(0.7),
                 ),
                 fillColor: Colors.greenAccent.withOpacity(0.8),
@@ -78,102 +82,117 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                itemCount: cryptoList.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 15),
-                    child: Row(
-                      children: [
-                        Text(
-                          (index + 1).toString(),
-                          style: TextStyle(
-                            color: Colors.grey[300],
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        SizedBox(
-                          width: index < 9
-                              ? 30
-                              : index == 99
-                                  ? 10
-                                  : 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              cryptoList[index].name,
-                              style: TextStyle(
-                                color: Colors.greenAccent.withOpacity(0.7),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+          cryptoList.isEmpty
+              ? Expanded(
+                  child: SizedBox(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      itemCount: cryptoList.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: Row(
+                            children: [
+                              Text(
+                                (index + 1).toString(),
+                                style: TextStyle(
+                                  color: Colors.grey[300],
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              cryptoList[index].symbol,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                              SizedBox(
+                                width: index < 9
+                                    ? 30
+                                    : index == 99
+                                        ? 10
+                                        : 20,
                               ),
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              cryptoList[index].priceUsd.toStringAsFixed(2),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    cryptoList[index].name,
+                                    style: TextStyle(
+                                      color:
+                                          Colors.greenAccent.withOpacity(0.7),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    cryptoList[index].symbol,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              cryptoList[index]
-                                  .changePercent24Hr
-                                  .toStringAsFixed(2),
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                              const Spacer(),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    cryptoList[index]
+                                        .priceUsd
+                                        .toStringAsFixed(2),
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    cryptoList[index]
+                                        .changePercent24Hr
+                                        .toStringAsFixed(2),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: cryptoList[index]
+                                                  .changePercent24Hr <
+                                              0.0
+                                          ? Colors.redAccent.withOpacity(0.7)
+                                          : Colors.greenAccent.withOpacity(0.7),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              Icon(
+                                cryptoList[index].changePercent24Hr < 0.0
+                                    ? Icons.trending_down
+                                    : Icons.trending_up,
                                 color: cryptoList[index].changePercent24Hr < 0.0
                                     ? Colors.redAccent.withOpacity(0.7)
                                     : Colors.greenAccent.withOpacity(0.7),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Icon(
-                          cryptoList[index].changePercent24Hr < 0.0
-                              ? Icons.trending_down
-                              : Icons.trending_up,
-                          color: cryptoList[index].changePercent24Hr < 0.0
-                              ? Colors.redAccent.withOpacity(0.7)
-                              : Colors.greenAccent.withOpacity(0.7),
-                        )
-                      ],
+                              )
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            ),
-          )
+                  ),
+                )
         ],
       ),
     );
