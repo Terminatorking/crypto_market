@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../crypto_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,12 +11,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Crypto> cryptoList = [];
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     TextEditingController searchController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              getData();
+            }),
         elevation: 0,
         title: const Text("CryptoMarket"),
         centerTitle: true,
@@ -70,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView.builder(
                 physics: const BouncingScrollPhysics(),
                 scrollDirection: Axis.vertical,
-                itemCount: 8,
+                itemCount: cryptoList.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 15),
@@ -84,13 +98,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: 18,
                           ),
                         ),
-                        const SizedBox(
-                          width: 30,
+                        SizedBox(
+                          width: index < 9 ? 30 : 15,
                         ),
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "bitcoin",
+                              cryptoList[index].name,
                               style: TextStyle(
                                 color: Colors.greenAccent.withOpacity(0.7),
                                 fontWeight: FontWeight.bold,
@@ -139,5 +154,25 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> getData() async {
+    Uri uri = Uri.parse("https://api.coincap.io/v2/assets/");
+    var response = await http.get(uri);
+    if (response.statusCode == 200) {
+      if (cryptoList.isEmpty) {
+        var json = jsonDecode(response.body);
+        List jsonlist = json["data"];
+        for (var element in jsonlist) {
+          setState(
+            () {
+              cryptoList.add(Crypto.fromeMapJson(element));
+            },
+          );
+        }
+      }
+    }
+    print(cryptoList);
+    print(response.statusCode);
   }
 }

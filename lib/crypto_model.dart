@@ -3,7 +3,7 @@ class Crypto {
   String symbol;
   double priceUsd;
   double changePercent24Hr;
-  
+
   Crypto({
     required this.name,
     required this.symbol,
@@ -13,10 +13,10 @@ class Crypto {
 
   factory Crypto.fromeMapJson(json) {
     return Crypto(
-      name: json["data"]["name"],
-      symbol: json["data"]["symbol"],
-      priceUsd: json["data"]["priceUsd"],
-      changePercent24Hr: json["data"]["changePercent24Hr"],
+      name: json["name"],
+      symbol: json["symbol"],
+      priceUsd: double.parse(json["priceUsd"]),
+      changePercent24Hr: double.parse(json["changePercent24Hr"]),
     );
   }
 }
