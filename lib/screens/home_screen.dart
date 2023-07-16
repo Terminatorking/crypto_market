@@ -12,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Crypto> cryptoList = [];
+  TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     getData();
@@ -21,7 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    TextEditingController searchController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -41,6 +41,10 @@ class _HomeScreenState extends State<HomeScreen> {
             margin: const EdgeInsets.all(20),
             width: size.width,
             child: TextField(
+              autofocus: true,
+              onChanged: (value) {
+                search(searchController.text);
+              },
               controller: searchController,
               cursorColor: Colors.white,
               style: TextStyle(
@@ -48,6 +52,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.black.withOpacity(0.7),
               ),
               decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.black.withOpacity(0.7),
+                ),
                 filled: true,
                 hintStyle: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -216,5 +224,27 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     print(cryptoList);
     print(response.statusCode);
+  }
+
+  Future<void> search(String search) async {
+    List<Crypto> searchedCryptoList = [];
+    searchedCryptoList = cryptoList.where(
+      (element) {
+        return element.name.toLowerCase().contains(
+              search.toLowerCase(),
+            );
+      },
+    ).toList();
+    if (search == "") {
+      searchedCryptoList.clear();
+      cryptoList.clear();
+      await getData();
+    } else {
+      setState(
+        () {
+          cryptoList = searchedCryptoList;
+        },
+      );
+    }
   }
 }
