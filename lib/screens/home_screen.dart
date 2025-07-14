@@ -207,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> getData() async {
-    Uri uri = Uri.parse("https://api.coincap.io/v2/assets/");
+    Uri uri = Uri.parse("https://rest.coincap.io/v3/assets?apiKey=e5846ddb9381fed5cb28965b4d0b8664ab3b1f8308184634b9f5234e7d077959");
     var response = await http.get(uri);
     if (response.statusCode == 200) {
       if (cryptoList.isEmpty) {
